@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.stats import spearmanr
 
 physical_data = {
     '10/27 Experiment 1:': { 'Washington St.': (9, 7), '14th St.': (12, 10) },
@@ -46,6 +47,20 @@ simulated_by_experiment = {
         '45s': (48, 60),
         '60s': (64, 81)
     }
+}
+
+throughput_data_wash = {
+    1: [33, 53, 59],
+    2: [70, 51, 75],
+    3: [54, 53, 63],
+    4: [55, 48, 64]
+}
+
+throughput_data_fourteenth = {
+    1: [63, 30, 44],
+    2: [66, 63, 64],
+    3: [64, 84, 50],
+    4: [45, 60, 81]
 }
 
 def real_world_bar_charts(title, data):
@@ -108,15 +123,40 @@ def mean_from_trials():
     plt.title('Mean Throughput (Number of Cars) Across 4 Trials | Varying Active Time')
     plt.show()
 
+def perform_statistical_analysis(trial, throughput):
+    times = [30, 45, 60]
+
+    pearson_coeff = np.corrcoef(times, throughput)[0, 1]
+
+    spearman_corr, _ = spearmanr(times, throughput)
+
+    print("Trial: {} - Pearson Correlation Coefficient: {}".format(trial, pearson_coeff))
+    print("Trial: {} - Spearman Rank Correlation Coefficient: {}".format(trial, spearman_corr))
+
 if __name__ == '__main__':
     # plot bar charts for real world exp
     for k, v in physical_data.items():
         real_world_bar_charts(k, v)
 
+    # plot bar charts for ciies skylines exp
     for k, v in simulated_data.items():
         simulated_bar_charts(k, v)
 
+    # plot line graph of wash and 14th
     mean_from_trials()
+    
+    # statistical analysis
+    print("Performing Statistical Tests")
+
+    print("==== WASHINGTON ST JUNCTION ====")
+
+    for k, v in throughput_data_wash.items():
+        perform_statistical_analysis(k, v)
+
+    print("==== 14 ST JUNCTION ====")
+
+    for k, v in throughput_data_fourteenth.items():
+        perform_statistical_analysis(k, v)
 
 
 
